@@ -4,7 +4,7 @@
 ## Introduction
 "Sushi Go!" is a card game of strategy and sushi creation. Our project aims to bring this fun and competitive game to life through simulation. 
 
-The game revolves around players who strategically play their cards to accumulate points, however, on each turn the player switches their hand to the players next to them. The goal of this project is to simulate an enitre play of three players which consists of 3 rounds with 9 cards per player per round. This simulation will not only provide an enjoyable virtual experience but also serve as a valuable learning tool for those looking to master the art of Sushi Go! strategy, offering insights and tactics that can be applied in real-life gameplay.
+The game revolves around players who strategically play their cards to accumulate points, however, on each turn the player switches their hand to the player next to them. The goal of this project is to simulate an enitre game of three players which consists of 3 rounds with 9 cards per player per round. At every round, on each turn all players must play a card and leave it on the table at the same time, and then switch their hand to the player next to them.  This simulation will not only provide an enjoyable virtual experience but also serve as a valuable learning tool for those looking to master the art of Sushi Go! strategy, offering insights and tactics that can be applied in real-life gameplay.
 
 By creating a library with classes like `Game`, `Deck`, `Player`, and `Card`, we are developing a tool for competitive game players who seek to enhance their strategic skills in Sushi Go! 
 
