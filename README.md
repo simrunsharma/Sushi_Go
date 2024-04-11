@@ -64,5 +64,5 @@ Coordinates the overall gameplay. It initializes the deck and players, handles t
 Adds the points at the end of each round according to cumulative cards, non cumulative cards and cumulative-interaction cards
 Adds points at the end of the three rounds
 
-# Class: Sushi platter
+### Class: Sushi platter
 Generates image of the winning player sushi plater according to all the cards he played
