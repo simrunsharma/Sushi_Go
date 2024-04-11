@@ -4,13 +4,14 @@
 ## Introduction
 "Sushi Go!" is a card game of strategy and sushi creation. Our project aims to bring this fun and competitive game to life through simulation. 
 
-The game revolves around players who strategically play their cards to accumulate points, however, on each turn the player switches their hand to the players next to them. The goal of this project is to simulate an enitre play which consists of 3 rounds with 9 cards played per round. This simulation will not only provide an enjoyable virtual experience but also serve as a valuable learning tool for those looking to master the art of Sushi Go! strategy, offering insights and tactics that can be applied in real-life gameplay.
+The game revolves around players who strategically play their cards to accumulate points, however, on each turn the player switches their hand to the players next to them. The goal of this project is to simulate an enitre play of three players which consists of 3 rounds with 9 cards per player per round. This simulation will not only provide an enjoyable virtual experience but also serve as a valuable learning tool for those looking to master the art of Sushi Go! strategy, offering insights and tactics that can be applied in real-life gameplay.
 
 By creating a library with classes like `Game`, `Deck`, `Player`, and `Card`, we are developing a tool for competitive game players who seek to enhance their strategic skills in Sushi Go! 
 
-![Alt Text](https://private-user-images.githubusercontent.com/141798228/321367429-b02c0d88-13a3-4160-8ae6-db51f0c2d67a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTI3NzUxOTksIm5iZiI6MTcxMjc3NDg5OSwicGF0aCI6Ii8xNDE3OTgyMjgvMzIxMzY3NDI5LWIwMmMwZDg4LTEzYTMtNDE2MC04YWU2LWRiNTFmMGMyZDY3YS5wbmc\_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDEwJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQxMFQxODQ4MTlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02OTkwMDRiMWE2OWE4OTAwODgzM2MxNjRiOTAyYTg0NTg5YWQ1OTVmOTdlMjU2MzRiYWM4NzJiYTMwN2JmMjkyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.OtkdQbk9HLb5b75RiKTDq6YyRk5RXxe4agao66HFlF4)
 
 ## Types of Cards
+![sushi](Images/sushi cards.png)
+
 ### Stand-alone Cards
 - Squid Nigiri: 3 points
 - Salmon Nigiri: 2 points
