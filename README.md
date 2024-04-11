@@ -71,7 +71,6 @@ Describes a participant in the game. This includes managing the player's hand of
 Coordinates the overall gameplay. It initializes the deck and players, handles the flow of the game across multiple rounds, determines the scores after each round, and at the end, identifies the winner of the game. Each round involves players drawing and playing a card from their hand according to strategic goals.
 
 ### Class:Score
-- Adds the points at the end of each round according to cumulative cards, non cumulative cards and cumulative-interaction cards
 - Adds points at the end of the three rounds according to the overall cumulative card (pudding)
 
 ### Class: Sushi platter
