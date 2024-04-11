@@ -10,7 +10,7 @@ By creating a library with classes like `Game`, `Deck`, `Player`, and `Card`, we
 
 
 ## Types of Cards
-![sushi](Images/sushi cards.png)
+![cards](Images/sushi_cards.png)
 
 ### Stand-alone Cards
 - Squid Nigiri: 3 points
