@@ -1,4 +1,4 @@
-"""This module presents functions for sushi go naive maximizer decisions"""
+"""This module presents a simulation of a naive maximizer decision for a sushi go game."""
 
 from random import shuffle
 
@@ -44,26 +44,6 @@ class Card:
         elif self.card_type == NIGIRI_EGG:
             return 1
         elif self.card_type == WASABI:
-            return 0
-
-    def apply_wasabi_multiplier(self, card):
-        """Apply the Wasabi multiplier effect to any Nigiri card."""
-        if self.card_type == WASABI and card.card_type in [
-            NIGIRI_SQUID,
-            NIGIRI_SALMON,
-            NIGIRI_EGG,
-        ]:
-            return card.score() * 3
-        else:
-            return card.score()
-
-    def cumulative_score_pen(self, count):
-        """Calculates the cumulative scores for tempura and sashimi cards."""
-        if self.card_type == TEMPURA:
-            return 5 * (count // 2)
-        elif self.card_type == SASHIMI:
-            return 10 * (count // 3)
-        else:
             return 0
 
     def dumpling_score(self, count):
