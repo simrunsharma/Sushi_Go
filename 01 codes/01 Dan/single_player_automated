@@ -1,4 +1,4 @@
-"""This module presents a simulation of a naive maximizer decision for a sushi go game."""
+"""Version 0. This module presents a simulation of a naive maximizer decision for a sushi go game."""
 
 from random import shuffle
 
