@@ -45,6 +45,8 @@ class Card:
             return 1
         elif self.card_type == WASABI:
             return 0
+        else:
+            raise ValueError(f"Invalid card type: {self.card_type}")
 
     def dumpling_score(self, count):
         """Calculate the score for Dumpling based on the number of cards played."""
@@ -59,8 +61,8 @@ class Card:
                 return 10
             elif count >= 5:
                 return 15
-        else:
-            return 0
+        
+        return 0
 
 
 class Deck:
@@ -99,10 +101,12 @@ class Player:
     def assign_cards(self, deck, num_cards):
         """Assigns cards to the player from the deck."""
         if num_cards > len(deck.cards):
-            raise ValueError("Not enough cards in the deck.")
-
+            print("Error: Not enough cards in the deck.")
+            return  # Stop further execution
+        if num_cards == 0:
+            print("Error: Number of cards in hand cannot be 0.")
+            return  # Stop further execution
         self.hand = deck.cards[:num_cards]
-        # Remove assigned cards from the deck
         deck.cards = deck.cards[num_cards:]
 
     def show_hand(self):
@@ -146,7 +150,7 @@ class Player:
             elif card.card_type == DUMPLING:
                 dumpling_count += 1
 
-        # Apply Wasabi multiplier to the highest scoring nigiri
+        
         if has_wasabi:
             nigiri_score += highest_nigiri_score * 3
 
@@ -174,11 +178,14 @@ class RandomTable:
     def draw_cards(self, deck, cards_for_t):
         """Draws N number of cards."""
         if len(deck.cards) < cards_for_t:
-            raise ValueError("Not enough cards in the deck to draw.")
-
+            print("Error: Not enough cards in the deck to draw.")
+            return  # Stop further execution
+        if cards_for_t == 0:
+            print("Error: Number of cards on the table cannot be 0.")
+            return  # Stop further execution
         self.cards_on_table = deck.cards[:cards_for_t]
-        # Remove drawn cards from the deck
         deck.cards = deck.cards[cards_for_t:]
+
 
     def show_table(self):
         """Prints the cards on the table."""
@@ -255,7 +262,7 @@ class SushiGoMaximizer:
                     if table_card.card_type == DUMPLING
                 )
                 possible_scores[card] = [card.dumpling_score(count_dumplings_on_table)]
-
+        print("possible scores:", possible_scores)
         return possible_scores
 
     def select_best_card(self):
@@ -277,7 +284,7 @@ if __name__ == "__main__":
     player.show_hand()
 
     table = RandomTable()
-    table.draw_cards(deck, 2)  # creates a random table of n cards
+    table.draw_cards(deck, 3)  # creates a random table of n cards
     print("Table cards:")
     table.show_table()
 
