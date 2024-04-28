@@ -2,6 +2,10 @@
 """Version 0. This module presents a simulation of a naive maximizer decision for a sushi go game."""
 
 from random import shuffle
+from PIL import Image
+import os
+# from random import shuffle
+# import tkinter as tk
 
 # CARDS
 TEMPURA = "Tempura"
@@ -12,6 +16,32 @@ NIGIRI_SALMON = "Salmon Nigiri"
 NIGIRI_EGG = "Egg Nigiri"
 WASABI = "Wasabi"
 MAKI_ROLLS = ["Maki 1", "Maki 2", "Maki 3"]
+
+# Add a helper function to display card images
+CARD_IMAGE_MAP = {
+    "Maki 1": "sushi_go_1_mr.jpeg",
+    "Maki 2": "sushi_go_2_mr.jpeg",
+    "Maki 3": "sushi_go_3_mr.jpeg",
+    "Dumpling": "sushi_go_dumpling.jpeg",
+    "Egg Nigiri": "sushi_go_egg_n.png",
+    "Salmon Nigiri": "sushi_go_salmon_n.jpeg",
+    "Sashimi": "sushi_go_sashimi.jpeg",
+    "Squid Nigiri": "sushi_go_squid_n.png",
+    "Tempura": "sushi_go_tempura.jpeg",
+    "Wasabi": "sushi_go_wasabi.jpeg"
+}
+
+# The updated show_card_image function
+def show_card_image(card_name):
+    # Use the card name to get the correct image filename from the map
+    image_name = CARD_IMAGE_MAP.get(card_name)
+    if image_name is None:
+        print(f"No image found for card: {card_name}")
+        return
+    image_path = os.path.join("..", "Images", image_name)
+    image = Image.open(image_path)
+    image.show()
+
 
 class Card:
     """Playing cards for Sushi Go."""
@@ -93,6 +123,7 @@ class Player:
         print(f"{self.name}'s hand:")
         for card in self.hand:
             print(card)
+            show_card_image(card.card_type)
 
     def calculate_final_score(self, table, best_card):
         table_cards = table.cards_on_table
@@ -129,13 +160,17 @@ class RandomTable:
         deck.cards = deck.cards[cards_for_t:]
 
     def show_table(self):
+        print("Table cards:")
         for card in self.cards_on_table:
             print(card)
+            show_card_image(card.card_type)  # This will display the card image
 
     def show_final_table(self, best_card):
         final_table = self.cards_on_table + [best_card]
+        print("Final table cards:")
         for card in final_table:
             print(card)
+            show_card_image(card.card_type)
 
 class SushiGoMaximizer:
     """Naive Maximizer strategy."""
@@ -168,20 +203,23 @@ class SushiGoMaximizer:
         best_card = max(possible_scores, key=lambda x: max(possible_scores[x], default=0))
         return best_card
 
-if __name__ == "__main__":
 
-    deck = Deck()  # Correctly create a Deck object which initializes its own cards
+
+# The main part of your script
+if __name__ == "__main__":
+    deck = Deck()
     player = Player("Player 1")
-    player.assign_cards(deck, 3)  # Ensure to pass the deck's cards list
+    player.assign_cards(deck, 3)
     player.show_hand()
+    
     table = RandomTable()
     table.draw_cards(deck, 3)
-    print("Table cards:")
     table.show_table()
     maximizer = SushiGoMaximizer(player, table)
     best_card = maximizer.select_best_card()
     if best_card:
         print(f"{player.name} plays: {best_card}")
+        show_card_image(best_card.card_type)  # This will display the best card image
         final_score = player.calculate_final_score(table, best_card)
         print(f"Final score for {player.name}: {final_score}")
         table.show_final_table(best_card)
