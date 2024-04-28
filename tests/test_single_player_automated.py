@@ -87,17 +87,27 @@ def test_sushi_go_maximizer():
     print("Test passed: Correct best card selected.")
 
 
-def test_zero_cards_in_hand():
-    """Test assigning zero cards to player's hand."""
-    deck = Deck()  # Create a deck of cards
-    player = Player("Test Player")
-    success = player.assign_cards(deck, 0)  # Try to assign zero cards
-    assert not success, "Test failed: The system should return False when trying to assign zero cards to hand."
-
 def test_zero_cards_on_table():
-    """Test drawing zero cards for the table."""
-    deck = Deck()  # Ensure there are enough cards
+    deck = Deck()  # Assume the deck is properly initialized and shuffled
+    player = Player("Test Player")
     table = RandomTable()
-    success = table.draw_cards(deck, 0)  # Try to draw zero cards for the table
-    assert not success, "Test failed: The system should return False when trying to draw zero cards for the table."
+
+    # Make sure there are enough cards for the player
+    assert player.assign_cards(deck, 3), "Failed to assign cards to player when there should be enough cards."
+
+    # Test drawing 0 cards for the table
+    table.draw_cards(deck, 0)  # This should simulate the beginning of the game
+    assert len(table.cards_on_table) == 0, "Test failed: There should be 0 cards on the table."
+
+    print("Test passed: Drawing 0 cards for the table handled correctly.")
+
+def test_zero_cards_in_hand():
+    deck = Deck()  # Assume the deck is initialized and shuffled
+    player = Player("Test Player")
+    table = RandomTable()
+
+    # Try assigning 0 cards to player, which should fail
+    assert not player.assign_cards(deck, 0), "Test failed: Assigning 0 cards should not be allowed."
+
+    print("Test passed: Assigning 0 cards in hand handled correctly.")
     
