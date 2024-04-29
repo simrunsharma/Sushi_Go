@@ -12,7 +12,7 @@ NIGIRI_SALMON = "Salmon Nigiri"
 NIGIRI_EGG = "Egg Nigiri"
 WASABI = "Wasabi"
 MAKI_ROLLS = ["Maki 1", "Maki 2", "Maki 3"]
-
+    
 
 class Card:
     """Playing cards for Sushi Go."""
