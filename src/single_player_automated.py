@@ -45,6 +45,8 @@ class Card:
             return 1
         elif self.card_type == WASABI:
             return 0
+        else:
+            raise ValueError(f"Invalid card type: {self.card_type}")
 
     def dumpling_score(self, count):
         """Calculate the score for Dumpling based on the number of cards played."""
@@ -59,8 +61,8 @@ class Card:
                 return 10
             elif count >= 5:
                 return 15
-        else:
-            return 0
+        
+        return 0
 
 
 class Deck:
@@ -99,11 +101,14 @@ class Player:
     def assign_cards(self, deck, num_cards):
         """Assigns cards to the player from the deck."""
         if num_cards > len(deck.cards):
-            raise ValueError("Not enough cards in the deck.")
-
+            print("Error: Not enough cards in the deck for the player to draw.")
+            return False
+        if num_cards == 0:
+            print("Error: Number of cards in hand cannot be 0.")
+            return False
         self.hand = deck.cards[:num_cards]
-        # Remove assigned cards from the deck
         deck.cards = deck.cards[num_cards:]
+        return True
 
     def show_hand(self):
         print(f"{self.name}'s hand:")
@@ -146,7 +151,7 @@ class Player:
             elif card.card_type == DUMPLING:
                 dumpling_count += 1
 
-        # Apply Wasabi multiplier to the highest scoring nigiri
+        
         if has_wasabi:
             nigiri_score += highest_nigiri_score * 3
 
@@ -173,12 +178,16 @@ class RandomTable:
 
     def draw_cards(self, deck, cards_for_t):
         """Draws N number of cards."""
+        if len(deck.cards) == 0:
+            print("Error: The deck is empty.")
+            return False  
         if len(deck.cards) < cards_for_t:
-            raise ValueError("Not enough cards in the deck to draw.")
-
+            print("Error: Not enough cards in the deck to draw for the table.")
+            return False 
         self.cards_on_table = deck.cards[:cards_for_t]
-        # Remove drawn cards from the deck
         deck.cards = deck.cards[cards_for_t:]
+        return True
+
 
     def show_table(self):
         """Prints the cards on the table."""
@@ -255,7 +264,6 @@ class SushiGoMaximizer:
                     if table_card.card_type == DUMPLING
                 )
                 possible_scores[card] = [card.dumpling_score(count_dumplings_on_table)]
-
         return possible_scores
 
     def select_best_card(self):
@@ -269,28 +277,33 @@ class SushiGoMaximizer:
                 best_card = card
         return best_card
 
-
 if __name__ == "__main__":
     deck = Deck()
     player = Player("Player 1")
-    player.assign_cards(deck, 3)  # assigns hand to player of n cards
-    player.show_hand()
-
-    table = RandomTable()
-    table.draw_cards(deck, 2)  # creates a random table of n cards
-    print("Table cards:")
-    table.show_table()
-
-    maximizer = SushiGoMaximizer(player, table)  # begins process to get best card
-    best_card = maximizer.select_best_card()  # applies method for best card
-
-    if best_card:
-        print(f"{player.name} plays: {best_card}")
-        # Calculate final score for player's hand
-        final_score = player.calculate_final_score(table, best_card)
-        print(f"Final score for {player.name}: {final_score}")
-        print("Final table:")
-        table.show_final_table(best_card)
-
+    if not player.assign_cards(deck, 3): 
+        print("Execution stopped due to error in assigning cards.")
     else:
-        print("No card to play.")
+        player.show_hand()
+        table = RandomTable()
+        num_cards_table = 4
+        table.draw_cards(deck, num_cards_table)
+        if num_cards_table == 0:  
+            print("Beginning of the game.")  
+        else:
+            print("Table cards:")
+            table.show_table()
+
+        maximizer = SushiGoMaximizer(player, table)  
+        best_card = maximizer.select_best_card()  
+
+        if best_card:
+            print(f"{player.name} plays: {best_card}")
+            final_score = player.calculate_final_score(table, best_card)
+            print(f"Final score for {player.name}: {final_score}")
+            print("Final table:")
+            table.show_final_table(best_card)
+        else:
+            print("No card to play.")
+
+
+
