@@ -1,6 +1,8 @@
 """Version 0. This module presents a simulation of a naive maximizer decision for a sushi go game."""
 
 from random import shuffle
+from collections import Counter
+
 
 # CARDS
 TEMPURA = "Tempura"
@@ -16,19 +18,18 @@ MAKI_ROLLS = ["Maki 1", "Maki 2", "Maki 3"]
 class Card:
     """Playing cards for Sushi Go."""
 
+    """This class assigns values to the different cards and has methods to sum the scores of special cards"""
+
     def __init__(self, card_type: str):
+        """Initialize."""
         self.card_type = card_type
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Generate a string view of this object."""
         return self.card_type
 
-    def __eq__(self, other):
-        return self.card_type == other.card_type if isinstance(other, Card) else False
-
-    def __hash__(self):
-        return hash(self.card_type)
-
     def score(self):
+        """Assigns base scores to the cards."""
         if self.card_type in MAKI_ROLLS:
             return MAKI_ROLLS.index(self.card_type) + 1
         elif self.card_type == TEMPURA:
@@ -49,8 +50,19 @@ class Card:
             raise ValueError(f"Invalid card type: {self.card_type}")
 
     def dumpling_score(self, count):
+        """Calculate the score for Dumpling based on the number of cards played."""
         if self.card_type == DUMPLING:
-            return [1, 3, 6, 10, 15][min(count, 5) - 1]
+            if count == 1:
+                return 1
+            elif count == 2:
+                return 3
+            elif count == 3:
+                return 6
+            elif count == 4:
+                return 10
+            elif count >= 5:
+                return 15
+        
         return 0
 
 
@@ -58,28 +70,25 @@ class Deck:
     """A deck of Sushi Go cards."""
 
     def __init__(self):
+        """Initialize."""
         self.cards = self._create_deck()
 
     def _create_deck(self):
         """Creates a deck of cards with the appropriate distribution for Sushi Go."""
         cards = []
-        # Correctly multiply each Maki Roll card by its count
-        cards.extend(
-            [
-                Card(mr)
-                for mr in MAKI_ROLLS
-                for _ in range([6, 12, 8][MAKI_ROLLS.index(mr)])
-            ]
-        )
-        cards.extend([Card(TEMPURA) for _ in range(14)])
-        cards.extend([Card(SASHIMI) for _ in range(14)])
-        cards.extend([Card(DUMPLING) for _ in range(14)])
-        cards.extend([Card(NIGIRI_SQUID) for _ in range(10)])
-        cards.extend([Card(NIGIRI_SALMON) for _ in range(5)])
-        cards.extend([Card(NIGIRI_EGG) for _ in range(5)])
-        cards.extend([Card(WASABI) for _ in range(6)])
+        cards += [Card(MAKI_ROLLS[0]) for _ in range(6)]
+        cards += [Card(MAKI_ROLLS[1]) for _ in range(12)]
+        cards += [Card(MAKI_ROLLS[2]) for _ in range(8)]
+        cards += [Card(TEMPURA) for _ in range(14)]
+        cards += [Card(SASHIMI) for _ in range(14)]
+        cards += [Card(DUMPLING) for _ in range(14)]
+        cards += [Card(NIGIRI_SQUID) for _ in range(10)]
+        cards += [Card(NIGIRI_SALMON) for _ in range(5)]
+        cards += [Card(NIGIRI_EGG) for _ in range(5)]
+        cards += [Card(WASABI) for _ in range(6)]
         shuffle(cards)
         return cards
+
 
 
 class Player:
@@ -124,58 +133,19 @@ class Player:
             print("No card to play.")
             return None
 
-    def calculate_final_score(self, table, best_card):
-        table_cards = table.cards_on_table
-        maki_counts = [
-            card.score()
-            for card in table_cards
-            if card.card_type in ["Maki 1", "Maki 2", "Maki 3"]
-        ]
-        maki_score = 0
-        if maki_counts:
-            max_maki = max(maki_counts)
-            maki_score = 6 if maki_counts.count(max_maki) == 1 else 3
-            if maki_counts.count(max_maki) > 1:
-                maki_counts = [count for count in maki_counts if count != max_maki]
-            if maki_counts:
-                second_max_maki = max(maki_counts)
-                maki_score += 3 if maki_counts.count(second_max_maki) == 1 else 1
-
-        nigiri_scores = [
-            card.score()
-            for card in table_cards
-            if card.card_type in [NIGIRI_SQUID, NIGIRI_SALMON, NIGIRI_EGG]
-        ]
-
-        tempura_count = sum(1 for card in table_cards if card.card_type == TEMPURA)
-        sashimi_count = sum(1 for card in table_cards if card.card_type == SASHIMI)
-        dumpling_count = sum(1 for card in table_cards if card.card_type == DUMPLING)
-        wasabi_applied = any(card.card_type == WASABI for card in table_cards)
-
-        # Calculate scores
-        tempura_score = (tempura_count // 2) * 5
-        sashimi_score = (sashimi_count // 3) * 10
-        dumpling_score = Card(DUMPLING).dumpling_score(dumpling_count)
-        highest_nigiri = max(nigiri_scores, default=0)
-        nigiri_score = sum(nigiri_scores) + (
-            3 * highest_nigiri if wasabi_applied else 0
-        )
-
-        total_score = (
-            maki_score + nigiri_score + tempura_score + sashimi_score + dumpling_score
-        )
-        return total_score
-
+    
 
 class RandomTable:
     """Cards randomly drawn on the table for the player to interact with."""
 
-    def __init__(self, cards_on_table, player1, player2):
+    def __init__(self, cards_on_table, player1, player2, card_type):
         self.cards_on_table = cards_on_table if cards_on_table is not None else []
         self.player1 = player1
         self.player2 = player2
         self.player1_table = []
         self.player2_table = []
+        self.card_type=card_type
+
 
     def show_table(self, player):
         if player == self.player1:
@@ -185,15 +155,6 @@ class RandomTable:
         else:
             raise ValueError("Invalid player")
 
-    # def draw_cards(self, deck, cards_for_t):
-    #     if len(deck.cards) < cards_for_t:
-    #         print("Error: Not enough cards in the deck to draw.")
-    #         return
-    #     if cards_for_t == 0:
-    #         print("Error: Number of cards on the table cannot be 0.")
-    #         return
-    #     self.cards_on_table = deck.cards[:cards_for_t]
-    #     deck.cards = deck.cards[cards_for_t:]
 
     def add_card(self, card):
         self.cards_on_table.append(card)
@@ -215,10 +176,6 @@ class RandomTable:
 
         return self
 
-    # def show_final_table(self, best_card):
-    #     final_table = self.cards_on_table + [best_card]
-    #     for card in final_table:
-    #         print(card)
 
 
 class SushiGoMaximizer:
@@ -274,18 +231,20 @@ class SushiGoMaximizer:
 
 
 class Game:
-    def __init__(self, player1_name, player2_name, rounds, deck):
+    def __init__(self, player1_name, player2_name, rounds, deck, card_type):
         self.player1 = Player(player1_name)
         self.player2 = Player(player2_name)
         self.rounds = rounds
         self.deck = deck
-        self.final_table = RandomTable(None, self.player1, self.player2)
+        self.card_type = card_type
+        self.final_table = RandomTable(None, self.player1, self.player2, card_type)
 
     def switch_hands(self):
         self.player1.hand, self.player2.hand = self.player2.hand, self.player1.hand
 
     def conduct_round(self):
         for _ in range(self.rounds):
+            round_winners = []
             # Assign cards and show hands
             self.player1.assign_cards(self.deck, 3)
             self.player2.assign_cards(self.deck, 3)
@@ -294,16 +253,19 @@ class Game:
 
             # Player 1 plays first card and table is initialized with it
             first_card_1 = self.player1.play_max_scoring_card()
-            self.table = RandomTable([first_card_1], self.player1, self.player2)
+            self.table = RandomTable([], self.player1, self.player2)  # Initialize an empty table
+            self.table.update_table_with_card(self.player1, first_card_1)  # Add first card to the correct table
             print("Player 1's table:")
-            self.table.show_table()
+            self.table.show_table()  # Show the correct player's table
             self.player1.show_hand()
 
             first_card_2 = self.player2.play_max_scoring_card()
-            self.table = RandomTable([first_card_2], self.player1, self.player2)
+            self.table.update_table_with_card(self.player2, first_card_2)  # Add first card to the correct table
             print("Player 2's table:")
-            self.table.show_table()
+            self.table.show_table()  # Show the correct player's table
             self.player2.show_hand()
+
+            
 
             # Switch hands
             self.switch_hands()
@@ -336,50 +298,89 @@ class Game:
                 print(
                     f"Player 2's table: {[str(card) for card in self.table.player2_table]}"
                 )
+        def calculate_final_score(self, table):
+            """Calculates the final score of the player's table"""
+            #table_cards = self.final_table
+            maki_score = 0
+            nigiri_score = 0
+            tempura_pairs = 0
+            sashimi_count = 0
+            dumpling_count = 0
 
-            final_score1 = self.player1.calculate_final_score(
-                self.final_table, first_card_1
+            has_wasabi = False
+            highest_nigiri_score = 0
+
+            for card in table:
+                if (
+                    card.card_type == "Maki 1"
+                    or card.card_type == "Maki 2"
+                    or card.card_type == "Maki 3"
+                ):
+                    maki_score += card.score()
+                elif (
+                    card.card_type == NIGIRI_SQUID
+                    or card.card_type == NIGIRI_SALMON
+                    or card.card_type == NIGIRI_EGG
+                ):
+                    nigiri_score += card.score()
+                    if card.score() > highest_nigiri_score:
+                        highest_nigiri_score = card.score()
+                elif card.card_type == WASABI:
+                    has_wasabi = True
+                elif card.card_type == TEMPURA:
+                    tempura_pairs += 1
+                elif card.card_type == SASHIMI:
+                    sashimi_count += 1
+                elif card.card_type == DUMPLING:
+                    dumpling_count += 1
+
+
+            if has_wasabi:
+                nigiri_score += highest_nigiri_score * 3
+
+            # Calculate score for tempura pairs
+            tempura_score = (tempura_pairs // 2) * 5
+
+            # Calculate score for sashimi sets
+            sashimi_score = (sashimi_count // 3) * 10
+
+            # Calculate score for dumplings
+            dumpling_score = Card(DUMPLING).dumpling_score(dumpling_count)
+
+            total_score = (
+                maki_score + nigiri_score + tempura_score + sashimi_score + dumpling_score
             )
-            final_score2 = self.player2.calculate_final_score(
-                self.final_table, first_card_2
-            )
-            print(f"Player 1's final score: {final_score1}")
-            print(f"Player 2's final score: {final_score2}")
-            print("\nEnd of game\n")
+            return total_score
+
+        final_score1 = self.player1.calculate_final_score(
+            [self.final_table]
+        )
+        final_score2 = self.player2.calculate_final_score(
+            [self.final_table]
+        )
+        print(f"Player 1's final score: {final_score1}")
+        print(f"Player 2's final score: {final_score2}")
+        # print("\nEnd of game\n")
+
+                # Determine winner of the round
+        if final_score1 > final_score2:
+            print("Player 1 wins the round!")
+            round_winners.append(self.player1.name)
+        elif final_score2 > final_score1:
+            print("Player 2 wins the round!")
+            round_winners.append(self.player2.name)
+        else:
+            print("The round is a tie!")
+            round_winners.append("Tie")
+
+
+        winner_count = Counter(round_winners)
+        game_winner = max(winner_count, key=winner_count.get)
+        print(f"\nOverall game winner: {game_winner}\n")
 
 
 if __name__ == "__main__":
     deck = Deck()  # Set the deck size here
+
     game = Game("Player 1", "Player 2", 1, deck)
     game.conduct_round()
-
-    # deck = Deck()  # Correctly create a Deck object which initializes its own cards
-    # player_1 = Player("Player 1")
-    # player_1.assign_cards(deck, 3)  # Ensure to pass the deck's cards list
-    # player_1.show_hand()
-    # # player_2 = Player("Player 2")
-    # # player_2.assign_cards(deck, 3)
-    # # player_2.show_hand()
-
-    # first_card = player_1.play_max_scoring_card()
-    # table_1 = RandomTable(first_card)
-    # # table_1.draw_cards(deck, 3)
-    # print("Table 1 cards:")
-    # table_1.show_table()
-    # player_1.show_hand()
-    # while player_1.hand:
-    #     table_1.update_table(player_1)
-    #     print("Table 1 cards:")
-    #     table_1.show_table()
-    # player_1.show_hand()
-    # player_1.calculate_final_score
-    # maximizer = SushiGoMaximizer(player, table)
-    # best_card = maximizer.select_best_card()
-    # if best_card:
-    #     print(f"{player.name} plays: {best_card}")
-    #     final_score = player.calculate_final_score(table, best_card)
-    #     print(f"Final score for {player.name}: {final_score}")
-    #     table.show_final_table(best_card)
-    # else:
-    #     print("No card to play.")
-# testing commit
