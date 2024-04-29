@@ -49,8 +49,6 @@ Each player needs a defined strategy of either:
 1. Maximizing points of the current play based on the table cards and their current hand before playing a card.
 2. Maximizing points based on the probability of getting the cumulative cards in subsequent rounds to maximize cards of this card.
 
-### Danger Zone Strategy (very complex type of card)
-- Chopstick card: When played, the player can play two cards together in the next round after playing this card.
 
 
 ## Skeletal Structure of the Game in Python
