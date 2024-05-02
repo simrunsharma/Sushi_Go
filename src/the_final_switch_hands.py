@@ -1,8 +1,18 @@
-"""Version 0. This module presents a simulation of a naive maximizer decision for a sushi go game."""
+"""This module presents a simulation of a Sushi- Go game.
+
+The simulation runs a game of three rounds between two players.
+On each round the players are given 9 cards:
+- On each turn of the round, the player draws one card to the table:
+    - The players draw their cards based on the card that will give
+      them the most points.
+    - The  best card depends on its value and the possible score in combination
+      to the cards on the player's table
+    - After each turn, the players switch hands with each other
+- After the three rounds the points are added.
+"""
 
 from random import shuffle
-from collections import Counter
-
+from typing import Any, List, Optional
 
 # CARDS
 TEMPURA = "Tempura"
@@ -18,7 +28,8 @@ MAKI_ROLLS = ["Maki 1", "Maki 2", "Maki 3"]
 class Card:
     """Playing cards for Sushi Go."""
 
-    """This class assigns values to the different cards and has methods to sum the scores of special cards"""
+    """This class assigns values to the different cards and has methods to sum 
+    the scores of special cards"""
 
     def __init__(self, card_type: str):
         """Initialize."""
@@ -28,7 +39,7 @@ class Card:
         """Generate a string view of this object."""
         return self.card_type
 
-    def score(self):
+    def score(self) -> int:
         """Assigns base scores to the cards."""
         if self.card_type in MAKI_ROLLS:
             return MAKI_ROLLS.index(self.card_type) + 1
@@ -49,8 +60,8 @@ class Card:
         else:
             raise ValueError(f"Invalid card type: {self.card_type}")
 
-    def dumpling_score(self, count):
-        """Calculate the score for Dumpling based on the number of cards played."""
+    def dumpling_score(self, count: int) -> int:
+        """Calculate the score for Dumpling based on the number of cards."""
         if self.card_type == DUMPLING:
             if count == 1:
                 return 1
@@ -62,19 +73,18 @@ class Card:
                 return 10
             elif count >= 5:
                 return 15
-
         return 0
 
 
 class Deck:
     """A deck of Sushi Go cards."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize."""
-        self.cards = self._create_deck()
+        self.cards: List[Card] = self._create_deck()
 
-    def _create_deck(self):
-        """Creates a deck of cards with the appropriate distribution for Sushi Go."""
+    def _create_deck(self) -> List[Card]:
+        """Creates deck of cards with the distribution Sushi Go card rules."""
         cards = []
         cards += [Card(MAKI_ROLLS[0]) for _ in range(6)]
         cards += [Card(MAKI_ROLLS[1]) for _ in range(12)]
@@ -90,60 +100,26 @@ class Deck:
         return cards
 
 
-class Player:
-    """Represents a player in the Sushi Go game."""
-
-    def __init__(self, name):
-        self.name = name
-        self.hand = []
-
-    def assign_cards(self, deck, num_cards):
-        if num_cards > len(deck.cards):
-            print("Error: Not enough cards in the deck.")
-            return
-        if num_cards == 0:
-            print("Error: Number of cards in hand cannot be 0.")
-            return
-        self.hand = deck.cards[:num_cards]
-        deck.cards = deck.cards[num_cards:]
-
-    def show_hand(self):
-        print(f"{self.name}'s hand: {', '.join(str(card) for card in self.hand)}")
-        # for card in self.hand:
-        #     print(card)
-
-    def play_max_scoring_card(self):
-        if not self.hand:
-            print(f"{self.name} has no cards to play.")
-            return None
-
-        max_scoring_card = max(self.hand, key=lambda card: card.score())
-        self.hand.remove(max_scoring_card)
-        return max_scoring_card
-
-    def play_best_card(self, table):
-        maximizer = SushiGoMaximizer(self, table)
-        best_card = maximizer.select_best_card()
-        if best_card:
-            self.hand.remove(best_card)
-            return best_card
-        else:
-            print("No card to play.")
-            return None
-
-
 class RandomTable:
-    """Cards randomly drawn on the table for the player to interact with."""
+    """Builds the table (or table )."""
 
-    def __init__(self, cards_on_table, player1, player2):
-        self.cards_on_table = cards_on_table if cards_on_table is not None else []
+    def __init__(
+        self,
+        cards_on_table: Optional[List[Card]],
+        player1: Player,
+        player2: Player,
+    ):
+        self.cards_on_table = (
+            cards_on_table if cards_on_table is not None else []
+        )
         self.player1 = player1
         self.player2 = player2
         self.player1_table = []
         self.player2_table = []
         # self.card_type=card_type
 
-    def show_table(self, player):
+    def show_table(self, player: Any):
+        """Prints table for each player."""
         if player == self.player1:
             print([str(card) for card in self.player1_table])
         elif player == self.player2:
@@ -151,13 +127,8 @@ class RandomTable:
         else:
             raise ValueError("Invalid player")
 
-    def add_card(self, card):
-        self.cards_on_table.append(card)
-
     def update_table_with_card(self, player, card):
-        """
-        This function adds a card to the player's table.
-        """
+        """Adds a card to the player's table."""
         if player == self.player1:
             self.player1_table.append(card)
         elif player == self.player2:
@@ -171,16 +142,23 @@ class RandomTable:
 class SushiGoMaximizer:
     """Naive Maximizer strategy."""
 
-    def __init__(self, player, table):
+    def __init__(self, player, table) -> None:
         self.player = player
         self.table = table
 
     def calculate_possible_scores(self):
+        """Calcualtes the possible score of each card on hand.
+
+        It calculates the p.s. of each card on hand by matching it with each
+        card on table and applying the combination rules from the game.
+        """
         possible_scores = {}
         for card in self.player.hand:
             possible_scores[card] = [card.score()]
             if card.card_type in [NIGIRI_SQUID, NIGIRI_SALMON, NIGIRI_EGG]:
-                if any(c.card_type == WASABI for c in self.table.cards_on_table):
+                if any(
+                    c.card_type == WASABI for c in self.table.cards_on_table
+                ):
                     possible_scores[card].append(card.score() * 3)
             elif card.card_type == WASABI:
                 for table_card in self.table.cards_on_table:
@@ -193,26 +171,34 @@ class SushiGoMaximizer:
             elif card.card_type == TEMPURA:
                 possible_scores[card].append(
                     5
-                    if any(c.card_type == TEMPURA for c in self.table.cards_on_table)
+                    if any(
+                        c.card_type == TEMPURA
+                        for c in self.table.cards_on_table
+                    )
                     else 0
                 )
             elif card.card_type == SASHIMI:
                 possible_scores[card].append(
                     10
                     if sum(
-                        1 for c in self.table.cards_on_table if c.card_type == SASHIMI
+                        1
+                        for c in self.table.cards_on_table
+                        if c.card_type == SASHIMI
                     )
                     >= 2
                     else 0
                 )
             elif card.card_type == DUMPLING:
                 dumplings = sum(
-                    1 for c in self.table.cards_on_table if c.card_type == DUMPLING
+                    1
+                    for c in self.table.cards_on_table
+                    if c.card_type == DUMPLING
                 )
                 possible_scores[card].append(card.dumpling_score(dumplings))
         return possible_scores
 
     def select_best_card(self):
+        """Selects the card with the max score from the possible scores."""
         possible_scores = self.calculate_possible_scores()
         best_card = max(
             possible_scores, key=lambda x: max(possible_scores[x], default=0)
@@ -222,6 +208,7 @@ class SushiGoMaximizer:
 
 class Game:
     def __init__(self, player1_name, player2_name, rounds, deck):
+        """Initalizes Game."""
         self.player1 = Player(player1_name)
         self.player2 = Player(player2_name)
         self.rounds = rounds
@@ -231,10 +218,15 @@ class Game:
         )  # Initialize an empty table for cards played during the game
 
     def switch_hands(self):
+        """Switches hands of players."""
         print("Switch Hands - Sushi Go!")
-        self.player1.hand, self.player2.hand = self.player2.hand, self.player1.hand
+        self.player1.hand, self.player2.hand = (
+            self.player2.hand,
+            self.player1.hand,
+        )
 
     def conduct_round(self):
+        """Plays a round of Sushi go."""
         overall_scores1 = []
         overall_scores2 = []
 
@@ -243,8 +235,8 @@ class Game:
             final_scores1 = []
             final_scores2 = []
             # Assign cards and show hands
-            self.player1.assign_cards(self.deck, 3)
-            self.player2.assign_cards(self.deck, 3)
+            self.player1.assign_cards(self.deck, 4)
+            self.player2.assign_cards(self.deck, 4)
 
             print()
             print(f"Round {_ + 1}")
@@ -273,7 +265,6 @@ class Game:
 
             # Players continue to play cards until they have no cards left
             while self.player1.hand:
-
                 best_card1 = self.player1.play_best_card(self.table)
                 print("Player 1 plays:", best_card1)
                 self.table.update_table_with_card(self.player1, best_card1)
@@ -295,10 +286,10 @@ class Game:
             final_score2 = self.calculate_final_score(self.table.player2_table)
 
             print(
-                f"Player 1's table: {', '.join(str(card) for card in self.table.player1_table)}"
+                f"Player 1's table: {', '.join(str(card) for card in self.table.player1_table)}"  # noqa: E501
             )
             print(
-                f"Player 2's table: {', '.join(str(card) for card in self.table.player2_table)}"
+                f"Player 2's table: {', '.join(str(card) for card in self.table.player2_table)}"  # noqa: E501
             )
             print()
 
@@ -339,7 +330,7 @@ class Game:
             print("\nOverall game is a tie!\n")
 
     def calculate_final_score(self, table_cards):
-        """Calculates the final score of the player's table"""
+        """Calculates the final score of the player's table."""
         maki_score = 0
         nigiri_score = 0
         tempura_pairs = 0
@@ -375,12 +366,16 @@ class Game:
         dumpling_score = Card(DUMPLING).dumpling_score(dumpling_count)
 
         total_score = (
-            maki_score + nigiri_score + tempura_score + sashimi_score + dumpling_score
+            maki_score
+            + nigiri_score
+            + tempura_score
+            + sashimi_score
+            + dumpling_score
         )
         return total_score
 
 
 if __name__ == "__main__":
     deck = Deck()  # Initialize the deck of cards
-    game = Game("Player 1", "Player 2", 2, deck)
+    game = Game("Player 1", "Player 2", 2, deck)  # game with two rounds
     game.conduct_round()
