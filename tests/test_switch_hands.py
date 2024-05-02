@@ -1,26 +1,24 @@
-import sys
+"""docstring to describe tests."""
+
 import os
+import sys
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
 
-from the_final_switch_hands import (
+from sushi_go_game import (
     Card,
     Deck,
+    Game,
     Player,
     RandomTable,
     SushiGoMaximizer,
-    Game,
 )
 
 
 def test_card() -> None:
-    """
-    Test the Card class for initialization, scoring, and error handling.
-    Ensures that cards are initialized with correct scores and that
-    ValueError is raised for invalid card types.
-    """
+    """Test the Card class for initialization, scoring, and error handling."""
     tempura_card = Card("Tempura")
     assert tempura_card.score() == 5, "Tempura should score 5"
 
@@ -41,10 +39,7 @@ def test_card() -> None:
 
 
 def test_deck() -> None:
-    """
-    Test the Deck class to ensure it contains the correct number of cards
-    and the right distribution of card types.
-    """
+    """Test the Deck classto ensure it contains the correct number of cards."""
     deck = Deck()
     assert len(deck.cards) == 94, "Deck should contain 94 cards"
 
@@ -55,10 +50,7 @@ def test_deck() -> None:
 
 
 def test_player() -> None:
-    """
-    Test the Player class to ensure proper card handling, card assignment,
-    and maximizing score logic.
-    """
+    """Test the Player class to ensure proper card handling."""
     deck = Deck()
     player = Player("Test Player")
 
@@ -73,10 +65,7 @@ def test_player() -> None:
 
 
 def test_random_table() -> None:
-    """
-    Test the RandomTable class for adding and retrieving cards correctly.
-    Ensures that the table updates and retrieves cards as expected for each player.
-    """
+    """Test the RandomTable class for adding and retrieving cards correctly."""
     player1 = Player("Player 1")
     player2 = Player("Player 2")
     table = RandomTable([], player1, player2)
@@ -89,10 +78,8 @@ def test_random_table() -> None:
 
 
 def test_sushi_go_maximizer() -> None:
-    """
-    Test the SushiGoMaximizer class to ensure it selects the highest scoring card from the hand.
-    Verifies the decision-making process based on current table and hand conditions.
-    """
+    """Test the SushiGoMaximizer class to ensure it selects."""
+    """highest scoring card."""
     player = Player("Maximizer Test Player")
     table = RandomTable([], player, None)
     player.hand = [Card("Sashimi"), Card("Tempura"), Card("Dumpling")]
@@ -106,10 +93,7 @@ def test_sushi_go_maximizer() -> None:
 
 
 def test_game() -> None:
-    """
-    Test the Game class to ensure proper gameplay mechanics, including conducting rounds and switching hands.
-    Also tests final score calculations based on collected cards.
-    """
+    """Test the Game class to ensure proper gameplay mechanics."""
     deck = Deck()
     game = Game("Player 1", "Player 2", 1, deck)
 
