@@ -1,6 +1,8 @@
 # Sushi Go: Biostatistics Final Project
 ![Logo](Images/sushi_logo.png)
 
+[![checks](https://github.com/simrunsharma/Sushi_Go/actions/workflows/checks.yml/badge.svg)](https://github.com/simrunsharma/Sushi_Go/actions/workflows/checks.yml)
+
 ## Introduction
 "Sushi Go!" is a card game of strategy and sushi creation. Our project aims to bring this fun and competitive game to life through simulation. 
 
