@@ -206,6 +206,50 @@ class SushiGoMaximizer:
         return best_card
 
 
+class Player:
+    """Represents a player in the Sushi Go game."""
+
+    def __init__(self, name):
+        self.name = name
+        self.hand = []
+
+    def assign_cards(self, deck, num_cards):
+        if num_cards > len(deck.cards):
+            print("Error: Not enough cards in the deck.")
+            return
+        if num_cards == 0:
+            print("Error: Number of cards in hand cannot be 0.")
+            return
+        self.hand = deck.cards[:num_cards]
+        deck.cards = deck.cards[num_cards:]
+
+    def show_hand(self):
+        print(
+            f"{self.name}'s hand: {', '.join(str(card) for card in self.hand)}"
+        )
+        # for card in self.hand:
+        #     print(card)
+
+    def play_max_scoring_card(self):
+        if not self.hand:
+            print(f"{self.name} has no cards to play.")
+            return None
+
+        max_scoring_card = max(self.hand, key=lambda card: card.score())
+        self.hand.remove(max_scoring_card)
+        return max_scoring_card
+
+    def play_best_card(self, table):
+        maximizer = SushiGoMaximizer(self, table)
+        best_card = maximizer.select_best_card()
+        if best_card:
+            self.hand.remove(best_card)
+            return best_card
+        else:
+            print("No card to play.")
+            return None
+
+
 class Game:
     def __init__(self, player1_name, player2_name, rounds, deck):
         """Initalizes Game."""
