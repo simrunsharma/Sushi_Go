@@ -92,7 +92,7 @@ Maximizing points of the current play based on the table cards and their current
 
 To run the main simulation:
 ```bash
-python src/switch_hands.py
+python src/sushi_go_game.py
 ```
 
 To run the tests:
