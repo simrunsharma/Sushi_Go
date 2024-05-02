@@ -2,6 +2,7 @@
 ![Logo](Images/sushi_logo.png)
 
 [![checks](https://github.com/simrunsharma/Sushi_Go/actions/workflows/checks.yml/badge.svg)](https://github.com/simrunsharma/Sushi_Go/actions/workflows/checks.yml)
+[![Python Test](https://github.com/simrunsharma/Sushi_Go/actions/workflows/python-test.yml/badge.svg)](https://github.com/simrunsharma/Sushi_Go/actions/workflows/python-test.yml)
 
 ## Introduction
 "Sushi Go!" is a card game of strategy and sushi creation. Our project aims to bring this fun and competitive game to life through simulation. 
